@@ -52,5 +52,9 @@ protected:
 public:
 	UFUNCTION()		//find nearest grid point from given location
 	FIntPoint GetNearestGridCoordFromLocation(FVector Location);
+
+	// returns the gridcell in the given coord // TOptional is just for C++. if you want blueprint access, you can make IsValid control in the FGridCell struct
+	TOptional<FGridCell> GetGridCellAtGivenGridCoord(FIntPoint GridCoord);
+	
 	
 };

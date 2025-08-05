@@ -15,7 +15,35 @@ class JIGSAWPUZZLE_API AMFPlayerController : public APlayerController
 	GENERATED_BODY()
 
 protected:
+
+	UPROPERTY()  // a reference to grid generator;
+	class AMFGridGenerator* GridGenerator;
+	
+	UPROPERTY()
+	AActor* SelectedPiece;
+
+	float OriginalZ = 0.f;	// selected pieces original z location.
+	float HoverOffset = 20.f; // offset to give the selected piece when dragging.
+	
+	//input 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	class UInputMappingContext* DefaultMappingContext;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	class UInputAction* ClickAction;
+	
+protected:
 	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaSeconds) override;
+	
+	virtual void SetupInputComponent() override;
+	
+	UFUNCTION()
+	void OnClickStarted();
+
+	UFUNCTION()
+	void OnClikEnded();
 	
 };
 

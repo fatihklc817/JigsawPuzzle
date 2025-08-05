@@ -3,6 +3,11 @@
 
 #include "JigsawPuzzle/Public/Grid/MFGridGenerator.h"
 
+#include <optional>
+
+#include "MFGameModeMain.h"
+#include "Kismet/GameplayStatics.h"
+
 
 AMFGridGenerator::AMFGridGenerator()
 {
@@ -21,6 +26,9 @@ void AMFGridGenerator::BeginPlay()
 	
 	GridOrigin = GetActorLocation();
 	GenerateGrid();
+
+	//set the grid generator reference in the gamemode
+	Cast<AMFGameModeMain>(UGameplayStatics::GetGameMode(GetWorld()))->SetGridGenerator(this);
 	
 }
 
@@ -50,5 +58,14 @@ FIntPoint AMFGridGenerator::GetNearestGridCoordFromLocation(FVector Location)
 	int32 GridY = FMath::RoundToInt((Location.Y - GridOrigin.Y) / GridCellSize);
 	
 	return FIntPoint(GridX, GridY);
+}
+
+TOptional<FGridCell> AMFGridGenerator::GetGridCellAtGivenGridCoord(FIntPoint GridCoord)
+{
+	if (GridCells.Contains(GridCoord) == false)
+	{
+		return{}; // return empty optinal grid cell
+	}
+	return GridCells[GridCoord];
 }
 
