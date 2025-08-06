@@ -4,8 +4,10 @@
 #include "Ui/MFHudWidget.h"
 
 #include "MFGameModeMain.h"
+#include "Algo/RandomShuffle.h"
 #include "Components/HorizontalBox.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetArrayLibrary.h"
 #include "Ui/MFPuzzleButtonWidget.h"
 
 void UMFHudWidget::NativeConstruct()
@@ -14,7 +16,9 @@ void UMFHudWidget::NativeConstruct()
 
 	if (AMFGameModeMain* GameMode = Cast<AMFGameModeMain>(UGameplayStatics::GetGameMode(GetWorld())))
 	{
-		const TArray<UPuzzlePieceData*>& Pieces = GameMode->GetPuzzlePieces();
+		 TArray<UPuzzlePieceData*> Pieces = GameMode->GetPuzzlePieces();
+		
+		Algo::RandomShuffle(Pieces);
 
 		for (UPuzzlePieceData* Piece : Pieces)
 		{
@@ -27,6 +31,10 @@ void UMFHudWidget::NativeConstruct()
 				PiecesHorizontalBox->AddChildToHorizontalBox(ButtonWidget);
 			}
 		}
+
+		
+	
+		
 		
 	}
 	
