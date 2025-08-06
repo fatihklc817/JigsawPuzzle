@@ -16,6 +16,9 @@ class JIGSAWPUZZLE_API AMFPlayerController : public APlayerController
 
 protected:
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UMFHudWidget> HudWidgetClass;
+	
 	UPROPERTY()  // a reference to grid generator;
 	class AMFGridGenerator* GridGenerator;
 	

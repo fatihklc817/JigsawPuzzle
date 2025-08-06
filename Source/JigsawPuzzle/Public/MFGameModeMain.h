@@ -14,6 +14,9 @@ class JIGSAWPUZZLE_API AMFGameModeMain : public AGameModeBase
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
+	TArray<class UPuzzlePieceData*> PuzzlePieces;
+
 	UPROPERTY()
 	class AMFGridGenerator* GridGenerator;
 
@@ -22,5 +25,7 @@ class JIGSAWPUZZLE_API AMFGameModeMain : public AGameModeBase
 public:
 	void SetGridGenerator(AMFGridGenerator* InGridGenerator);
 	AMFGridGenerator* GetGridGenerator();
+
+	TArray<UPuzzlePieceData*> GetPuzzlePieces();
 	
 };

@@ -12,3 +12,8 @@ AMFGridGenerator* AMFGameModeMain::GetGridGenerator()
 {
 	return GridGenerator;
 }
+
+TArray<UPuzzlePieceData*> AMFGameModeMain::GetPuzzlePieces()
+{
+	return PuzzlePieces;
+}

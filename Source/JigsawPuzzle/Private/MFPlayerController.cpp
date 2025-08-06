@@ -10,6 +10,7 @@
 #include "MFGameModeMain.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Grid/MFGridGenerator.h"
+#include "Ui/MFHudWidget.h"
 
 
 void AMFPlayerController::BeginPlay()
@@ -33,9 +34,11 @@ void AMFPlayerController::BeginPlay()
 		SetViewTarget(Cast<ACameraActor>(FoundCameras[0]));
 	}
 
-	
-
-	//
+	if (HudWidgetClass)
+	{
+		UMFHudWidget* Hud = CreateWidget<UMFHudWidget>(this, HudWidgetClass);
+		Hud->AddToViewport();
+	}
 	
 	
 
