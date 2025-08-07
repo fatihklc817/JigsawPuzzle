@@ -41,6 +41,7 @@ public:
 	void InitializeButtonWithData(UMFHudWidget* InHud);
 
 	bool GetIsUsed();
+	void SetIsUsed(bool InIsUsed);
 	
 
 	void SetPuzzlePieceData(UPuzzlePieceData* InPuzzlePieceData);

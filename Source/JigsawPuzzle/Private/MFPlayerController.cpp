@@ -10,7 +10,9 @@
 #include "MFGameModeMain.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Grid/MFGridGenerator.h"
+#include "Piece/MFPuzzlePiece.h"
 #include "Ui/MFHudWidget.h"
+#include "Ui/MFPuzzleButtonWidget.h"
 
 
 void AMFPlayerController::BeginPlay()
@@ -36,7 +38,7 @@ void AMFPlayerController::BeginPlay()
 
 	if (HudWidgetClass)
 	{
-		UMFHudWidget* Hud = CreateWidget<UMFHudWidget>(this, HudWidgetClass);
+		Hud = CreateWidget<UMFHudWidget>(this, HudWidgetClass);
 		Hud->AddToViewport();
 	}
 	
@@ -96,7 +98,7 @@ void AMFPlayerController::OnClickStarted()
 		if (Hit.GetActor() && Hit.GetActor()->ActorHasTag("piece"))
 		{
 			OriginalZ = Hit.GetActor()->GetActorLocation().Z;
-			SelectedPiece = Hit.GetActor();
+			SelectedPiece = Cast<AMFPuzzlePiece>(Hit.GetActor());
 			UE_LOG(LogTemp, Warning, TEXT("name : %s"),*SelectedPiece->GetActorNameOrLabel());
 		}
 	}
@@ -128,10 +130,21 @@ void AMFPlayerController::OnClikEnded()
 	}
 	else
 	{
-		SelectedPiece->SetActorLocation(FVector(PieceLocation.X, PieceLocation.Y, OriginalZ));
-		SelectedPiece = nullptr;
 		
+		SelectedPiece->GetPieceButtonWidget()->SetIsUsed(false);
+		Hud->RefreshPuzzleWidgets();
+		SelectedPiece->Destroy();
+		SelectedPiece = nullptr;
 	}
 	
 
 }
+
+void AMFPlayerController::SetSelectedPiece(AMFPuzzlePiece* InSelectedPiece)
+{
+	OriginalZ = InSelectedPiece->GetActorLocation().Z;
+	SelectedPiece = InSelectedPiece;
+	HoverOffset = 20;
+}
+
+

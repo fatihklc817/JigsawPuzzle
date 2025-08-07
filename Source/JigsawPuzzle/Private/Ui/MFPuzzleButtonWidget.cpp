@@ -3,9 +3,12 @@
 
 #include "Ui/MFPuzzleButtonWidget.h"
 
+#include "MFPlayerController.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Data/PuzzlePieceData.h"
+#include "Kismet/GameplayStatics.h"
+#include "Piece/MFPuzzlePiece.h"
 #include "Ui/MFHudWidget.h"
 
 void UMFPuzzleButtonWidget::SetPuzzlePieceData(UPuzzlePieceData* InPuzzlePieceData)
@@ -36,10 +39,14 @@ void UMFPuzzleButtonWidget::NativeConstruct()
 void UMFPuzzleButtonWidget::OnButtonClick()
 {
 	FActorSpawnParameters SpawnParams;
-	
-	GetWorld()->SpawnActor<AActor>(PuzzlePieceData->Piece3DClass,FVector::ZeroVector,FRotator::ZeroRotator,SpawnParams);
+
+	AMFPuzzlePiece* SpawnedPiece = GetWorld()->SpawnActor<AMFPuzzlePiece>(PuzzlePieceData->Piece3DClass, FVector(0.f,0.f,100.f),FRotator::ZeroRotator, SpawnParams);
+	SpawnedPiece->SetPieceButtonWidget(this);
 	bIsUsed = true;
 	HudRef->RefreshPuzzleWidgets();
+
+	AMFPlayerController* PlayerController = Cast<AMFPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(),0));
+	PlayerController->SetSelectedPiece(SpawnedPiece);
 	//spawnla 3d de
 	//refresh ui 
 }
@@ -53,4 +60,9 @@ void UMFPuzzleButtonWidget::InitializeButtonWithData(UMFHudWidget* InHud)
 bool UMFPuzzleButtonWidget::GetIsUsed()
 {
 	return bIsUsed;
+}
+
+void UMFPuzzleButtonWidget::SetIsUsed(bool InIsUsed)
+{
+	bIsUsed = InIsUsed;
 }

@@ -18,12 +18,15 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UMFHudWidget> HudWidgetClass;
+
+	UPROPERTY()
+	class UMFHudWidget* Hud;
 	
 	UPROPERTY()  // a reference to grid generator;
 	class AMFGridGenerator* GridGenerator;
 	
 	UPROPERTY()
-	AActor* SelectedPiece;
+	class AMFPuzzlePiece* SelectedPiece;
 
 	float OriginalZ = 0.f;	// selected pieces original z location.
 	float HoverOffset = 20.f; // offset to give the selected piece when dragging.
@@ -47,6 +50,9 @@ protected:
 
 	UFUNCTION()
 	void OnClikEnded();
+
+public:
+	void SetSelectedPiece(AMFPuzzlePiece* InSelectedPiece);
 	
 };
 

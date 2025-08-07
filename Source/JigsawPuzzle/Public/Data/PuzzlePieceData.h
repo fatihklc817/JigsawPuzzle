@@ -23,7 +23,7 @@ public:
 	UTexture2D* Thumbnail;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<AActor> Piece3DClass;
+	TSubclassOf<class AMFPuzzlePiece> Piece3DClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FIntPoint PieceCorrectCoord;
