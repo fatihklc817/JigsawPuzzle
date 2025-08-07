@@ -132,34 +132,43 @@ void AMFPlayerController::OnClikEnded()
 	FIntPoint NearestGridCoord = GridGenerator->GetNearestGridCoordFromLocation(PieceLocation);
 	UE_LOG(LogTemp, Warning, TEXT("grid point : %d %d"), NearestGridCoord.X, NearestGridCoord.Y);
 	
-	if (TOptional<FGridCell> GridCellResult = GridGenerator->GetGridCellAtGivenGridCoord(NearestGridCoord))
+	if (FGridCell* GridCell = GridGenerator->GetGridCellAtGivenGridCoord(NearestGridCoord))
 	{
 
-		FGridCell GridCell = GridCellResult.GetValue();
+		
 
-		TArray<AActor*> OverlappingActors;
-		SelectedPiece->GetMesh()->GetOverlappingActors(OverlappingActors,AMFPuzzlePiece::StaticClass());
-		if (OverlappingActors.Num() > 0)
+		if (GridCell->OccupyingActor)
 		{
-			
+			auto OldOccupyingPiece = Cast<AMFPuzzlePiece>(GridCell->OccupyingActor);
+			if (!SelectedPiece->GetBIsPlacedBefore()) //if the cell is occypied and the new piece is coming from hud 
+			{
+				OldOccupyingPiece->GetPieceButtonWidget()->SetIsUsed(false);
+				Hud->RefreshPuzzleWidgets();
+				OldOccupyingPiece->Destroy();
+				
+			}
+			else                                      //the cell is occupied and the new piece is coming from another grid cell. so we switch 
+			{
+				if (FGridCell* NewPiecesGridCell = GridGenerator->GetGridCellAtGivenGridCoord(SelectedPiece->GetCurrentLocationGridPoint()))
+				{
+					OldOccupyingPiece->SetActorLocation(NewPiecesGridCell->Location);
+					OldOccupyingPiece->SetCurrentLocationGridPoint(SelectedPiece->GetCurrentLocationGridPoint());
+					NewPiecesGridCell->OccupyingActor = OldOccupyingPiece;
+
+					SetIsThePieceInRightPositionInControlMap(SelectedPiece->GetCurrentLocationGridPoint(),OldOccupyingPiece->GetPuzzlePieceData());
+				}
+			}
 		}
 		
 		
 		
-		SelectedPiece->SetActorLocation(FVector(GridCell.Location.X, GridCell.Location.Y, OriginalZ));
+		SelectedPiece->SetActorLocation(FVector(GridCell->Location.X, GridCell->Location.Y, OriginalZ));
 		SelectedPiece->SetCurrentLocationGridPoint(NearestGridCoord);
+
+		GridCell->OccupyingActor = SelectedPiece;
 		
 		//check win condition
-		TMap<UPuzzlePieceData*, bool>& PieceControlMap = GameModeRef->GetPieceControlMap();
-		if (NearestGridCoord == SelectedPiece->GetPuzzlePieceData()->PieceCorrectCoord)
-		{
-			
-			PieceControlMap[SelectedPiece->GetPuzzlePieceData()] = true;
-		}
-		else
-		{
-			PieceControlMap[SelectedPiece->GetPuzzlePieceData()] = false;
-		}
+		SetIsThePieceInRightPositionInControlMap(NearestGridCoord, SelectedPiece->GetPuzzlePieceData());
 		
 		GameModeRef->CheckWinCondition();
 		
@@ -186,3 +195,16 @@ void AMFPlayerController::SetSelectedPiece(AMFPuzzlePiece* InSelectedPiece)
 }
 
 
+void AMFPlayerController::SetIsThePieceInRightPositionInControlMap(FIntPoint InGridCoord, UPuzzlePieceData* InPieceData)
+{
+	TMap<UPuzzlePieceData*, bool>& PieceControlMap = GameModeRef->GetPieceControlMap();
+	if (InGridCoord == InPieceData->PieceCorrectCoord)
+	{
+			
+		PieceControlMap[InPieceData] = true;
+	}
+	else
+	{
+		PieceControlMap[InPieceData] = false;
+	}
+}

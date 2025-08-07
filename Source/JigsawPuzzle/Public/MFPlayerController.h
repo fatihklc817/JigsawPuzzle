@@ -55,6 +55,9 @@ protected:
 	UFUNCTION()
 	void OnClikEnded();
 
+	UFUNCTION()
+	void SetIsThePieceInRightPositionInControlMap(FIntPoint InGridCoord, UPuzzlePieceData* InPieceData);
+	
 public:
 	void SetSelectedPiece(AMFPuzzlePiece* InSelectedPiece);
 	

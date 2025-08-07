@@ -60,12 +60,12 @@ FIntPoint AMFGridGenerator::GetNearestGridCoordFromLocation(FVector Location)
 	return FIntPoint(GridX, GridY);
 }
 
-TOptional<FGridCell> AMFGridGenerator::GetGridCellAtGivenGridCoord(FIntPoint GridCoord)
+FGridCell* AMFGridGenerator::GetGridCellAtGivenGridCoord(FIntPoint GridCoord)
 {
 	if (GridCells.Contains(GridCoord) == false)
 	{
 		return{}; // return empty optinal grid cell
 	}
-	return GridCells[GridCoord];
+	return &GridCells[GridCoord];
 }
 
