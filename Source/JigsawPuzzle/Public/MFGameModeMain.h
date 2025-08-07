@@ -18,14 +18,30 @@ class JIGSAWPUZZLE_API AMFGameModeMain : public AGameModeBase
 	TArray<class UPuzzlePieceData*> PuzzlePieces;
 
 	UPROPERTY()
+	TMap<UPuzzlePieceData*,bool> PieceControlMap;
+			
+	
+	UPROPERTY()
 	class AMFGridGenerator* GridGenerator;
 
+public:
+	virtual void BeginPlay() override;
+	
+	
+	void CheckWinCondition();
+	
 
-//Getter Setters
+#pragma region Getter/Setters
+	
 public:
 	void SetGridGenerator(AMFGridGenerator* InGridGenerator);
 	AMFGridGenerator* GetGridGenerator();
 
 	TArray<UPuzzlePieceData*> GetPuzzlePieces();
+
+	TMap<UPuzzlePieceData*,bool>& GetPieceControlMap();
 	
+#pragma endregion
+
+
 };

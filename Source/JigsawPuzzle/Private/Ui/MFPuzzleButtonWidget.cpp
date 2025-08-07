@@ -32,6 +32,7 @@ void UMFPuzzleButtonWidget::NativeConstruct()
 	if (Button)
 	{
 		Button->OnClicked.AddUniqueDynamic(this,&UMFPuzzleButtonWidget::OnButtonClick);
+		//Button->OnReleased.AddUniqueDynamic(this,&UMFPuzzleButtonWidget::OnButtonReleased);
 	}
 	
 }
@@ -56,6 +57,14 @@ void UMFPuzzleButtonWidget::InitializeButtonWithData(UMFHudWidget* InHud)
 	PieceThumbnail->SetBrushFromTexture(PuzzlePieceData->Thumbnail);
 	HudRef = InHud;
 }
+
+// void UMFPuzzleButtonWidget::OnButtonReleased()
+// {
+// 	AMFPlayerController* PlayerController = Cast<AMFPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(),0));
+// 	PlayerController->OnClickReleasedFromUI();
+// 	
+// }
+
 
 bool UMFPuzzleButtonWidget::GetIsUsed()
 {

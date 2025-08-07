@@ -39,7 +39,9 @@ protected:
 public:
 	UFUNCTION()
 	void InitializeButtonWithData(UMFHudWidget* InHud);
-
+	
+	
+//getter setters
 	bool GetIsUsed();
 	void SetIsUsed(bool InIsUsed);
 	

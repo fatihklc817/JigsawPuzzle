@@ -39,7 +39,7 @@ void AMFGridGenerator::GenerateGrid()
 			for (int32 y = 0; y < GridHeight; y++)
 			{
 				FVector CellLocation = GridOrigin + FVector(x * GridCellSize, y * GridCellSize, 0);
-				DrawDebugSphere(GetWorld(),CellLocation,10,12,FColor::Red, true, -1);
+				DrawDebugSphere(GetWorld(),CellLocation,5,12,FColor::Red, true, -1);
 				
 				FGridCell NewCell;
 				NewCell.Location = CellLocation;

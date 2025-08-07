@@ -16,6 +16,10 @@ class JIGSAWPUZZLE_API AMFPlayerController : public APlayerController
 
 protected:
 
+	UPROPERTY()
+	class AMFGameModeMain* GameModeRef;
+	
+	
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UMFHudWidget> HudWidgetClass;
 
@@ -53,6 +57,7 @@ protected:
 
 public:
 	void SetSelectedPiece(AMFPuzzlePiece* InSelectedPiece);
+	
 	
 };
 

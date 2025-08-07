@@ -9,6 +9,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "MFGameModeMain.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
+#include "Data/PuzzlePieceData.h"
 #include "Grid/MFGridGenerator.h"
 #include "Piece/MFPuzzlePiece.h"
 #include "Ui/MFHudWidget.h"
@@ -41,6 +42,8 @@ void AMFPlayerController::BeginPlay()
 		Hud = CreateWidget<UMFHudWidget>(this, HudWidgetClass);
 		Hud->AddToViewport();
 	}
+
+	GameModeRef = Cast<AMFGameModeMain>(UGameplayStatics::GetGameMode(GetWorld()));
 	
 	
 
@@ -59,8 +62,8 @@ void AMFPlayerController::Tick(float DeltaSeconds)
 	
 		if (GetWorld()->LineTraceSingleByChannel(Hit, WorldOrigin, WorldOrigin + WorldDirection * 10000, ECC_Visibility))
 		{
-			DrawDebugSphere(GetWorld(), Hit.Location, 10.0f, 10, FColor::Green, false, 2.f, 0, 1.0f);
-			DrawDebugLine(GetWorld(), WorldOrigin, Hit.Location, FColor::Green, false, 2.f, 0, 1.0f);
+			//DrawDebugSphere(GetWorld(), Hit.Location, 10.0f, 10, FColor::Green, false, 2.f, 0, 1.0f);
+			//DrawDebugLine(GetWorld(), WorldOrigin, Hit.Location, FColor::Green, false, 2.f, 0, 1.0f);
 			
 			FVector Location = Hit.ImpactPoint;
 			FVector TargetLocation = FVector(Location.X, Location.Y, OriginalZ + HoverOffset);
@@ -85,6 +88,12 @@ void AMFPlayerController::SetupInputComponent()
 
 void AMFPlayerController::OnClickStarted()
 {
+	if (SelectedPiece != nullptr)
+	{
+		OnClikEnded();
+		return;
+	}
+	
 	UE_LOG(LogTemp, Warning, TEXT("Clicked"));
 	
 	FVector WorldOrigin, WorldDirection;
@@ -93,8 +102,8 @@ void AMFPlayerController::OnClickStarted()
 	FHitResult Hit;
 	if (GetWorld()->LineTraceSingleByChannel(Hit, WorldOrigin, WorldOrigin + WorldDirection * 10000, ECC_Visibility))
 	{
-		DrawDebugSphere(GetWorld(), Hit.Location, 10.0f, 10, FColor::Green, false, 10.f, 0, 1.0f);
-		DrawDebugLine(GetWorld(), WorldOrigin, Hit.Location, FColor::Green, false, 10.f, 0, 1.0f);
+		//DrawDebugSphere(GetWorld(), Hit.Location, 10.0f, 10, FColor::Green, false, 10.f, 0, 1.0f);
+		//DrawDebugLine(GetWorld(), WorldOrigin, Hit.Location, FColor::Green, false, 10.f, 0, 1.0f);
 		if (Hit.GetActor() && Hit.GetActor()->ActorHasTag("piece"))
 		{
 			OriginalZ = Hit.GetActor()->GetActorLocation().Z;
@@ -121,11 +130,39 @@ void AMFPlayerController::OnClikEnded()
 	
 	FVector PieceLocation = SelectedPiece->GetActorLocation();
 	FIntPoint NearestGridCoord = GridGenerator->GetNearestGridCoordFromLocation(PieceLocation);
+	UE_LOG(LogTemp, Warning, TEXT("grid point : %d %d"), NearestGridCoord.X, NearestGridCoord.Y);
 	
 	if (TOptional<FGridCell> GridCellResult = GridGenerator->GetGridCellAtGivenGridCoord(NearestGridCoord))
 	{
+
 		FGridCell GridCell = GridCellResult.GetValue();
+
+		TArray<AActor*> OverlappingActors;
+		SelectedPiece->GetMesh()->GetOverlappingActors(OverlappingActors,AMFPuzzlePiece::StaticClass());
+		if (OverlappingActors.Num() > 0)
+		{
+			
+		}
+		
+		
+		
 		SelectedPiece->SetActorLocation(FVector(GridCell.Location.X, GridCell.Location.Y, OriginalZ));
+		SelectedPiece->SetCurrentLocationGridPoint(NearestGridCoord);
+		
+		//check win condition
+		TMap<UPuzzlePieceData*, bool>& PieceControlMap = GameModeRef->GetPieceControlMap();
+		if (NearestGridCoord == SelectedPiece->GetPuzzlePieceData()->PieceCorrectCoord)
+		{
+			
+			PieceControlMap[SelectedPiece->GetPuzzlePieceData()] = true;
+		}
+		else
+		{
+			PieceControlMap[SelectedPiece->GetPuzzlePieceData()] = false;
+		}
+		
+		GameModeRef->CheckWinCondition();
+		
 		SelectedPiece = nullptr;
 	}
 	else
@@ -139,6 +176,7 @@ void AMFPlayerController::OnClikEnded()
 	
 
 }
+
 
 void AMFPlayerController::SetSelectedPiece(AMFPuzzlePiece* InSelectedPiece)
 {

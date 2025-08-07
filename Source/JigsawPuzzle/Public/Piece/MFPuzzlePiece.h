@@ -12,14 +12,39 @@ class JIGSAWPUZZLE_API AMFPuzzlePiece : public AActor
 	GENERATED_BODY()
 
 protected:
+	bool bIsPlacedBefore = false;
+
+	UPROPERTY(VisibleAnywhere,Category="Components")
+	UStaticMeshComponent* StaticMeshComponent;
+	
+	UPROPERTY(VisibleAnywhere,Category="Components")
+	class UBoxComponent* BoxCollision;
+	
 	UPROPERTY()
 	class UMFPuzzleButtonWidget* PieceButtonWidget;
-	
+
+	UPROPERTY(EditDefaultsOnly)
+	class UPuzzlePieceData* PuzzlePieceData;
+
+	UPROPERTY()
+	FIntPoint CurrentLocationGridPoint;
 	
 public:	
 	AMFPuzzlePiece();
 
+#pragma region Getter/Setters
+	
 	UMFPuzzleButtonWidget* GetPieceButtonWidget();
 	void SetPieceButtonWidget(UMFPuzzleButtonWidget* InPieceButtonWidget);
 
+	UPuzzlePieceData* GetPuzzlePieceData();
+
+	void SetCurrentLocationGridPoint(FIntPoint InCurrentLocationGridPoint);
+	FIntPoint GetCurrentLocationGridPoint();
+
+	UStaticMeshComponent* GetMesh();
+
+	bool GetBIsPlacedBefore();
+	
+#pragma endregion 
 };
