@@ -6,10 +6,20 @@
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Data/PuzzlePieceData.h"
+#include "Ui/MFHudWidget.h"
 
 void UMFPuzzleButtonWidget::SetPuzzlePieceData(UPuzzlePieceData* InPuzzlePieceData)
 {
 	PuzzlePieceData = InPuzzlePieceData;
+}
+
+UPuzzlePieceData* UMFPuzzleButtonWidget::GetPuzzlePieceData()
+{
+	if (PuzzlePieceData != nullptr)
+	{
+		return PuzzlePieceData;
+	}
+	return nullptr;
 }
 
 void UMFPuzzleButtonWidget::NativeConstruct()
@@ -25,10 +35,22 @@ void UMFPuzzleButtonWidget::NativeConstruct()
 
 void UMFPuzzleButtonWidget::OnButtonClick()
 {
+	FActorSpawnParameters SpawnParams;
 	
+	GetWorld()->SpawnActor<AActor>(PuzzlePieceData->Piece3DClass,FVector::ZeroVector,FRotator::ZeroRotator,SpawnParams);
+	bIsUsed = true;
+	HudRef->RefreshPuzzleWidgets();
+	//spawnla 3d de
+	//refresh ui 
 }
 
-void UMFPuzzleButtonWidget::InitializeButtonWithData()
+void UMFPuzzleButtonWidget::InitializeButtonWithData(UMFHudWidget* InHud)
 {
 	PieceThumbnail->SetBrushFromTexture(PuzzlePieceData->Thumbnail);
+	HudRef = InHud;
+}
+
+bool UMFPuzzleButtonWidget::GetIsUsed()
+{
+	return bIsUsed;
 }

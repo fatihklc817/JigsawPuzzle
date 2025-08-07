@@ -6,6 +6,7 @@
 #include "MFGameModeMain.h"
 #include "Algo/RandomShuffle.h"
 #include "Components/HorizontalBox.h"
+#include "Data/PuzzlePieceData.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetArrayLibrary.h"
 #include "Ui/MFPuzzleButtonWidget.h"
@@ -19,6 +20,7 @@ void UMFHudWidget::NativeConstruct()
 		 TArray<UPuzzlePieceData*> Pieces = GameMode->GetPuzzlePieces();
 		
 		Algo::RandomShuffle(Pieces);
+		VisiblePieces = Pieces;
 
 		for (UPuzzlePieceData* Piece : Pieces)
 		{
@@ -26,16 +28,27 @@ void UMFHudWidget::NativeConstruct()
 			if (ButtonWidget)
 			{
 				ButtonWidget->SetPuzzlePieceData(Piece);
-				ButtonWidget->InitializeButtonWithData();
-				
+				ButtonWidget->InitializeButtonWithData(this);
+				PuzzleWidgetPool.Add(ButtonWidget);
 				PiecesHorizontalBox->AddChildToHorizontalBox(ButtonWidget);
 			}
 		}
-
-		
-	
-		
-		
 	}
 	
+}
+
+
+void UMFHudWidget::RefreshPuzzleWidgets()
+{
+	for (UMFPuzzleButtonWidget* Widget : PuzzleWidgetPool)
+	{
+		if (!Widget->GetIsUsed())
+		{
+			Widget->SetVisibility(ESlateVisibility::Visible);
+		}
+		else
+		{
+			Widget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}
 }

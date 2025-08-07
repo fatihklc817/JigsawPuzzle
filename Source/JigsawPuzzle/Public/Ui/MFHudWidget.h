@@ -13,7 +13,13 @@ UCLASS()
 class JIGSAWPUZZLE_API UMFHudWidget : public UUserWidget
 {
 	GENERATED_BODY()
+	
+	UPROPERTY()
+	TArray<class UPuzzlePieceData*> VisiblePieces;;
 
+	UPROPERTY()
+	TArray<class UMFPuzzleButtonWidget*> PuzzleWidgetPool;
+	
 	UPROPERTY(meta=(BindWidget))
 	class UHorizontalBox* PiecesHorizontalBox;
 
@@ -23,5 +29,7 @@ class JIGSAWPUZZLE_API UMFHudWidget : public UUserWidget
 protected:
 	virtual void NativeConstruct() override;
 
+public:
 	
+	void RefreshPuzzleWidgets();
 };

@@ -14,7 +14,9 @@ class JIGSAWPUZZLE_API UMFPuzzleButtonWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-public:
+protected:
+	bool bIsUsed;
+	
 	UPROPERTY(meta=(BindWidget))
 	class UButton* Button;
 
@@ -24,7 +26,9 @@ public:
 	UPROPERTY()
 	class UPuzzlePieceData* PuzzlePieceData;
 
-	void SetPuzzlePieceData(UPuzzlePieceData* InPuzzlePieceData);
+	UPROPERTY()
+	class UMFHudWidget* HudRef;
+	
 
 protected:
 	virtual void NativeConstruct() override;
@@ -34,5 +38,11 @@ protected:
 
 public:
 	UFUNCTION()
-	void InitializeButtonWithData();
+	void InitializeButtonWithData(UMFHudWidget* InHud);
+
+	bool GetIsUsed();
+	
+
+	void SetPuzzlePieceData(UPuzzlePieceData* InPuzzlePieceData);
+	UPuzzlePieceData* GetPuzzlePieceData();
 };
