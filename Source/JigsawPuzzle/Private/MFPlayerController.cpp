@@ -26,6 +26,10 @@ void AMFPlayerController::BeginPlay()
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 	}
 	
+	FInputModeGameAndUI InputMode;
+	InputMode.SetHideCursorDuringCapture(false);
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	SetInputMode(InputMode);
 	bShowMouseCursor = true;
 
 	//Find camera and Set view target for player
@@ -108,6 +112,7 @@ void AMFPlayerController::OnClickStarted()
 		{
 			OriginalZ = Hit.GetActor()->GetActorLocation().Z;
 			SelectedPiece = Cast<AMFPuzzlePiece>(Hit.GetActor());
+			GridGenerator->GetGridCellAtGivenGridCoord(SelectedPiece->GetCurrentLocationGridPoint())->OccupyingActor = nullptr;
 			UE_LOG(LogTemp, Warning, TEXT("name : %s"),*SelectedPiece->GetActorNameOrLabel());
 		}
 	}
@@ -127,16 +132,13 @@ void AMFPlayerController::OnClikEnded()
 	{
 		GridGenerator = Cast<AMFGameModeMain>(UGameplayStatics::GetGameMode(GetWorld()))->GetGridGenerator();
 	}
-	
+	FIntPoint PreviousGridCoord = SelectedPiece->GetCurrentLocationGridPoint();
 	FVector PieceLocation = SelectedPiece->GetActorLocation();
 	FIntPoint NearestGridCoord = GridGenerator->GetNearestGridCoordFromLocation(PieceLocation);
 	UE_LOG(LogTemp, Warning, TEXT("grid point : %d %d"), NearestGridCoord.X, NearestGridCoord.Y);
 	
 	if (FGridCell* GridCell = GridGenerator->GetGridCellAtGivenGridCoord(NearestGridCoord))
 	{
-
-		
-
 		if (GridCell->OccupyingActor)
 		{
 			auto OldOccupyingPiece = Cast<AMFPuzzlePiece>(GridCell->OccupyingActor);
@@ -166,6 +168,11 @@ void AMFPlayerController::OnClikEnded()
 		SelectedPiece->SetCurrentLocationGridPoint(NearestGridCoord);
 
 		GridCell->OccupyingActor = SelectedPiece;
+
+		if (!SelectedPiece->GetBIsPlacedBefore() || PreviousGridCoord != NearestGridCoord)
+		{
+			GameModeRef->IncreaseMoveCount();
+		}
 		
 		//check win condition
 		SetIsThePieceInRightPositionInControlMap(NearestGridCoord, SelectedPiece->GetPuzzlePieceData());

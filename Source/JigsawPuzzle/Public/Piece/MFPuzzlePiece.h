@@ -12,6 +12,7 @@ class JIGSAWPUZZLE_API AMFPuzzlePiece : public AActor
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(VisibleAnywhere)
 	bool bIsPlacedBefore = false;
 
 	UPROPERTY(VisibleAnywhere,Category="Components")
