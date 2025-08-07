@@ -12,23 +12,21 @@ class JIGSAWPUZZLE_API AMFPuzzlePiece : public AActor
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(VisibleAnywhere)
-	bool bIsPlacedBefore = false;
+	
+	UPROPERTY(VisibleAnywhere)		
+	bool bIsPlacedBefore = false;	//to Check whether the piece was created from the user interface or whether it already exists in the grid. // this is for swapping 		
 
 	UPROPERTY(VisibleAnywhere,Category="Components")
 	UStaticMeshComponent* StaticMeshComponent;
 	
-	UPROPERTY(VisibleAnywhere,Category="Components")
-	class UBoxComponent* BoxCollision;
-	
 	UPROPERTY()
-	class UMFPuzzleButtonWidget* PieceButtonWidget;
+	class UMFPuzzleButtonWidget* PieceButtonWidget; //this is a reference to the ui button of the puzzle piece, so if we remove the piece from the grid, we can show the ui button again
 
 	UPROPERTY(EditDefaultsOnly)
-	class UPuzzlePieceData* PuzzlePieceData;
+	class UPuzzlePieceData* PuzzlePieceData;  //reference to piece's data
 
 	UPROPERTY()
-	FIntPoint CurrentLocationGridPoint;
+	FIntPoint CurrentLocationGridPoint;  
 	
 public:	
 	AMFPuzzlePiece();

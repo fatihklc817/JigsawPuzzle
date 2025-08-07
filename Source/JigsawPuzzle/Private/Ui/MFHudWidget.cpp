@@ -18,10 +18,11 @@ void UMFHudWidget::NativeConstruct()
 	if (AMFGameModeMain* GameMode = Cast<AMFGameModeMain>(UGameplayStatics::GetGameMode(GetWorld())))
 	{
 		 TArray<UPuzzlePieceData*> Pieces = GameMode->GetPuzzlePieces();
-		
-		Algo::RandomShuffle(Pieces);
-		VisiblePieces = Pieces;
 
+		//shuffles the pieces so every time it's sorted randomly in the ui
+		Algo::RandomShuffle(Pieces);
+
+		//creates, initializes and adds to the widget pool. for all piece's widget buttons 
 		for (UPuzzlePieceData* Piece : Pieces)
 		{
 			UMFPuzzleButtonWidget* ButtonWidget = CreateWidget<UMFPuzzleButtonWidget>(this,PuzzleButtonWidgetClass);
@@ -38,6 +39,7 @@ void UMFHudWidget::NativeConstruct()
 }
 
 
+//refresh the ui - which buttons are enabled to use - show available ones
 void UMFHudWidget::RefreshPuzzleWidgets()
 {
 	for (UMFPuzzleButtonWidget* Widget : PuzzleWidgetPool)

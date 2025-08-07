@@ -15,21 +15,19 @@ class JIGSAWPUZZLE_API UMFHudWidget : public UUserWidget
 	GENERATED_BODY()
 	
 	UPROPERTY()
-	TArray<class UPuzzlePieceData*> VisiblePieces;;
-
-	UPROPERTY()
-	TArray<class UMFPuzzleButtonWidget*> PuzzleWidgetPool;
+	TArray<class UMFPuzzleButtonWidget*> PuzzleWidgetPool;    //for storing a reference to all of our ui puzzle buttons' widgets
 	
 	UPROPERTY(meta=(BindWidget))
-	class UHorizontalBox* PiecesHorizontalBox;
+	class UHorizontalBox* PiecesHorizontalBox;			//The container widget to add and show our button widgets 
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class UMFPuzzleButtonWidget> PuzzleButtonWidgetClass;
+	TSubclassOf<class UMFPuzzleButtonWidget> PuzzleButtonWidgetClass;	//widget Class to spawn button widgets 
 
 protected:
 	virtual void NativeConstruct() override;
 
 public:
-	
+
+	//refresh the ui - which buttons are enabled to use - show available ones
 	void RefreshPuzzleWidgets();
 };

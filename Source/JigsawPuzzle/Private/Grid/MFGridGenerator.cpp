@@ -32,6 +32,8 @@ void AMFGridGenerator::BeginPlay()
 	
 }
 
+
+//generate grid and add every cell in to the TMap 
 void AMFGridGenerator::GenerateGrid()
 {
 		for (int32 x = 0; x < GridWidth; x++)
@@ -52,6 +54,7 @@ void AMFGridGenerator::GenerateGrid()
 }
 
 
+//return the closest gridcell  coord to the given location
 FIntPoint AMFGridGenerator::GetNearestGridCoordFromLocation(FVector Location)
 {
 	int32 GridX = FMath::RoundToInt((Location.X - GridOrigin.X) / GridCellSize);
@@ -60,11 +63,12 @@ FIntPoint AMFGridGenerator::GetNearestGridCoordFromLocation(FVector Location)
 	return FIntPoint(GridX, GridY);
 }
 
+
 FGridCell* AMFGridGenerator::GetGridCellAtGivenGridCoord(FIntPoint GridCoord)
 {
 	if (GridCells.Contains(GridCoord) == false)
 	{
-		return{}; // return empty optinal grid cell
+		return{}; 
 	}
 	return &GridCells[GridCoord];
 }

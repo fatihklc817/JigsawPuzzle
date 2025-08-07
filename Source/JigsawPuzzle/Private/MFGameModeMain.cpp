@@ -10,15 +10,17 @@
 void AMFGameModeMain::BeginPlay()
 {
 	Super::BeginPlay();
-
-	GetWorldTimerManager().SetTimer(GameTimerHandle,this,&AMFGameModeMain::UpdateElapsedTime,1,true);
 	
+	//initializes PieceControlMap - adds all pieces to TMap.
 	for (auto PuzzlePieceData : PuzzlePieces)
 	{
 		PieceControlMap.Add(PuzzlePieceData, false);
 	}
+
+	
 }
 
+//checks the map - if every piece is in right coord, player wins. 
 void AMFGameModeMain::CheckWinCondition()
 {
 	for (auto Piece : PieceControlMap)
@@ -47,16 +49,6 @@ void AMFGameModeMain::IncreaseMoveCount()
 	MoveCount++;
 }
 
-int32 AMFGameModeMain::GetMoveCount()
-{
-	return MoveCount;
-}
-
-void AMFGameModeMain::UpdateElapsedTime()
-{
-	ElapsedTime +=1.0f;
-}
-
 
 #pragma region Getter/Setters
 
@@ -80,9 +72,10 @@ TMap<UPuzzlePieceData*, bool>& AMFGameModeMain::GetPieceControlMap()
 	return PieceControlMap;
 }
 
-float AMFGameModeMain::GetElapsedTime()
+int32 AMFGameModeMain::GetMoveCount()
 {
-	return ElapsedTime;
+	return MoveCount;
 }
+
 
 #pragma endregion

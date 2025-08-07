@@ -16,29 +16,27 @@ class JIGSAWPUZZLE_API AMFGameModeMain : public AGameModeBase
 
 protected:
 
-	FTimerHandle GameTimerHandle;
-	float ElapsedTime = 0.0f;
-	
+	//for counting player's moves
 	int32 MoveCount;
 	
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly) //for creating end widget 
 	TSubclassOf<UUserWidget> EndWidgetClass;
 	
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, meta=(AllowPrivateAccess="true"))		//ref to all pieces' data to store for checking win condition
 	TArray<class UPuzzlePieceData*> PuzzlePieces;
 
-	UPROPERTY()
+	UPROPERTY()  //win condition map - it stores every piece and a bool that says is the piece in right coord
 	TMap<UPuzzlePieceData*,bool> PieceControlMap;
 			
 	
-	UPROPERTY()
+	UPROPERTY()  //a reference to gridGenerator 
 	class AMFGridGenerator* GridGenerator;
 
 public:
 	virtual void BeginPlay() override;
 	
-	
+	//checks the map - if every piece is in right coord, player wins. 
 	void CheckWinCondition();
 
 	void IncreaseMoveCount();
@@ -46,8 +44,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	int32 GetMoveCount();
 
-	UFUNCTION()
-	void UpdateElapsedTime();
 
 #pragma region Getter/Setters
 	
@@ -59,8 +55,6 @@ public:
 
 	TMap<UPuzzlePieceData*,bool>& GetPieceControlMap();
 
-	UFUNCTION(BlueprintCallable)
-	float GetElapsedTime();
 #pragma endregion
 
 

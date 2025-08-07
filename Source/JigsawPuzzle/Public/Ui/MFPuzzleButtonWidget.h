@@ -15,19 +15,23 @@ class JIGSAWPUZZLE_API UMFPuzzleButtonWidget : public UUserWidget
 	GENERATED_BODY()
 
 protected:
-	bool bIsUsed;
-	
+	bool bIsUsed;  //this bool is stores if this widget's piece is used or not 
+
+
+	//widget ui components
 	UPROPERTY(meta=(BindWidget))
 	class UButton* Button;
 
 	UPROPERTY(meta=(BindWidget))
 	class UImage* PieceThumbnail;
+	//
 
+	
 	UPROPERTY()
-	class UPuzzlePieceData* PuzzlePieceData;
+	class UPuzzlePieceData* PuzzlePieceData;  //ref to piece's DataAsset
 
-	UPROPERTY()
-	class UMFHudWidget* HudRef;
+	UPROPERTY() 
+	class UMFHudWidget* HudRef;  //ref to HudWidget
 	
 
 protected:
@@ -36,16 +40,22 @@ protected:
 	UFUNCTION()
 	void OnButtonClick();
 
+	
 public:
+
+	//to set up this widget when creating;
 	UFUNCTION()
 	void InitializeButtonWithData(UMFHudWidget* InHud);
 	
 	
-//getter setters
+#pragma region Getter/Setters
+
 	bool GetIsUsed();
 	void SetIsUsed(bool InIsUsed);
 	
-
 	void SetPuzzlePieceData(UPuzzlePieceData* InPuzzlePieceData);
 	UPuzzlePieceData* GetPuzzlePieceData();
+
+#pragma endregion 
+	
 };

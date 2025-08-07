@@ -20,19 +20,20 @@ void AMFPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Add mapping context
+	// Adds mapping context
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 	}
-	
+
+	//sets the input mode 
 	FInputModeGameAndUI InputMode;
 	InputMode.SetHideCursorDuringCapture(false);
 	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 	SetInputMode(InputMode);
 	bShowMouseCursor = true;
 
-	//Find camera and Set view target for player
+	//Finds camera and Set view target for player
 	TArray<AActor*> FoundCameras;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACameraActor::StaticClass(), FoundCameras);
 
@@ -41,12 +42,13 @@ void AMFPlayerController::BeginPlay()
 		SetViewTarget(Cast<ACameraActor>(FoundCameras[0]));
 	}
 
+	//creates hud and adds it to the viewport
 	if (HudWidgetClass)
 	{
 		Hud = CreateWidget<UMFHudWidget>(this, HudWidgetClass);
 		Hud->AddToViewport();
 	}
-
+	
 	GameModeRef = Cast<AMFGameModeMain>(UGameplayStatics::GetGameMode(GetWorld()));
 	
 	
@@ -57,6 +59,7 @@ void AMFPlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	//if any piece is selected, set its location to the mouse while pressed
 	if (SelectedPiece)
 	{
 		FHitResult Hit;
@@ -90,14 +93,18 @@ void AMFPlayerController::SetupInputComponent()
 	}
 }
 
+
 void AMFPlayerController::OnClickStarted()
 {
+	
 	if (SelectedPiece != nullptr)
 	{
-		OnClikEnded();
+		OnClikEnded();		//if the piece is spawned from ui, place it to the grid with click and return;
 		return;
 	}
-	
+
+
+	//if no piece is selected - throw a ray to the world and select the piece
 	UE_LOG(LogTemp, Warning, TEXT("Clicked"));
 	
 	FVector WorldOrigin, WorldDirection;
@@ -123,6 +130,10 @@ void AMFPlayerController::OnClickStarted()
 
 void AMFPlayerController::OnClikEnded()
 {
+	//checks the nearest grid point and if it's empty, places the piece to the found grid cell
+	//if found grid cell occupied and the piece was spawned from ui. destroys the old occupying piece and places the new piece
+	//if found grid cell occupied, and the piece is getting dragged from another grid cell, Swaps the pieces!
+	
 	if (SelectedPiece == nullptr)
 	{
 		return;
@@ -132,9 +143,11 @@ void AMFPlayerController::OnClikEnded()
 	{
 		GridGenerator = Cast<AMFGameModeMain>(UGameplayStatics::GetGameMode(GetWorld()))->GetGridGenerator();
 	}
+	
 	FIntPoint PreviousGridCoord = SelectedPiece->GetCurrentLocationGridPoint();
 	FVector PieceLocation = SelectedPiece->GetActorLocation();
 	FIntPoint NearestGridCoord = GridGenerator->GetNearestGridCoordFromLocation(PieceLocation);
+	
 	UE_LOG(LogTemp, Warning, TEXT("grid point : %d %d"), NearestGridCoord.X, NearestGridCoord.Y);
 	
 	if (FGridCell* GridCell = GridGenerator->GetGridCellAtGivenGridCoord(NearestGridCoord))
@@ -142,14 +155,14 @@ void AMFPlayerController::OnClikEnded()
 		if (GridCell->OccupyingActor)
 		{
 			auto OldOccupyingPiece = Cast<AMFPuzzlePiece>(GridCell->OccupyingActor);
-			if (!SelectedPiece->GetBIsPlacedBefore()) //if the cell is occypied and the new piece is coming from hud 
+			if (!SelectedPiece->GetBIsPlacedBefore())	//if the cell is occupied and the new piece is coming from hud // destroys the old occupying piece 
 			{
 				OldOccupyingPiece->GetPieceButtonWidget()->SetIsUsed(false);
 				Hud->RefreshPuzzleWidgets();
 				OldOccupyingPiece->Destroy();
 				
 			}
-			else                                      //the cell is occupied and the new piece is coming from another grid cell. so we switch 
+			else                                      //the cell is occupied and the new piece is coming from another grid cell. // so we switch pieces 
 			{
 				if (FGridCell* NewPiecesGridCell = GridGenerator->GetGridCellAtGivenGridCoord(SelectedPiece->GetCurrentLocationGridPoint()))
 				{
@@ -169,6 +182,7 @@ void AMFPlayerController::OnClikEnded()
 
 		GridCell->OccupyingActor = SelectedPiece;
 
+		//increase the player move count
 		if (!SelectedPiece->GetBIsPlacedBefore() || PreviousGridCoord != NearestGridCoord)
 		{
 			GameModeRef->IncreaseMoveCount();
@@ -183,7 +197,7 @@ void AMFPlayerController::OnClikEnded()
 	}
 	else
 	{
-		
+		//no grid cell found ... piece going back to the ui 
 		SelectedPiece->GetPieceButtonWidget()->SetIsUsed(false);
 		Hud->RefreshPuzzleWidgets();
 		SelectedPiece->Destroy();
@@ -201,7 +215,7 @@ void AMFPlayerController::SetSelectedPiece(AMFPuzzlePiece* InSelectedPiece)
 	HoverOffset = 20;
 }
 
-
+//This checks if the piece is in the right coord and sets the Tmap (PieceControlMap) which is in the game mode 
 void AMFPlayerController::SetIsThePieceInRightPositionInControlMap(FIntPoint InGridCoord, UPuzzlePieceData* InPieceData)
 {
 	TMap<UPuzzlePieceData*, bool>& PieceControlMap = GameModeRef->GetPieceControlMap();

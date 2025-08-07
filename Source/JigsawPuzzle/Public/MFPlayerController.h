@@ -16,24 +16,28 @@ class JIGSAWPUZZLE_API AMFPlayerController : public APlayerController
 
 protected:
 
-	UPROPERTY()
+	UPROPERTY()									//a reference to our game mode 
 	class AMFGameModeMain* GameModeRef;
 	
 	
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly)						//hud widget class to create Hud
 	TSubclassOf<class UMFHudWidget> HudWidgetClass;
 
-	UPROPERTY()
+	UPROPERTY()										//hud reference 
 	class UMFHudWidget* Hud;
+
 	
-	UPROPERTY()  // a reference to grid generator;
+	UPROPERTY()									// a reference to grid generator;
 	class AMFGridGenerator* GridGenerator;
+
 	
-	UPROPERTY()
+	UPROPERTY()									// var to store selected piece
 	class AMFPuzzlePiece* SelectedPiece;
 
-	float OriginalZ = 0.f;	// selected pieces original z location.
-	float HoverOffset = 20.f; // offset to give the selected piece when dragging.
+	
+	float OriginalZ = 0.f;					// selected pieces original z location.
+	float HoverOffset = 20.f;				// offset to give the selected piece when dragging.
+
 	
 	//input 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
@@ -41,6 +45,7 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	class UInputAction* ClickAction;
+
 	
 protected:
 	virtual void BeginPlay() override;
@@ -55,8 +60,9 @@ protected:
 	UFUNCTION()
 	void OnClikEnded();
 
+	//This checks if the piece is in the right coord and sets the Tmap (PieceControlMap) which is in the game mode 
 	UFUNCTION()
-	void SetIsThePieceInRightPositionInControlMap(FIntPoint InGridCoord, UPuzzlePieceData* InPieceData);
+	void SetIsThePieceInRightPositionInControlMap(FIntPoint InGridCoord,class UPuzzlePieceData* InPieceData);
 	
 public:
 	void SetSelectedPiece(AMFPuzzlePiece* InSelectedPiece);

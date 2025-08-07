@@ -14,6 +14,9 @@ AMFPuzzlePiece::AMFPuzzlePiece()
 	
 }
 
+
+#pragma region Getter/Setter
+
 UMFPuzzleButtonWidget* AMFPuzzlePiece::GetPieceButtonWidget()
 {
 	if (PieceButtonWidget != nullptr)
@@ -59,5 +62,6 @@ bool AMFPuzzlePiece::GetBIsPlacedBefore()
 	return bIsPlacedBefore;
 }
 
+#pragma endregion
 
 

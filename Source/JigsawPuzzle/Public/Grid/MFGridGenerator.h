@@ -12,11 +12,12 @@ struct FGridCell
 {
 	GENERATED_BODY()
 
-	FVector Location;
+	FVector Location;	//location for snapping pieces 
+	
 	bool bOccupied = false;
 
 	UPROPERTY()
-	TObjectPtr<AActor> OccupyingActor;
+	TObjectPtr<AActor> OccupyingActor; 
 };
 
 
@@ -35,8 +36,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,Category="Grid")
 	float GridCellSize;
-
-	TMap<FIntPoint, FGridCell> GridCells;
+	//
+	
+	TMap<FIntPoint, FGridCell> GridCells;		//this TMap is for pairing up the cells and its coordination in the grid 
 
 	FVector GridOrigin;
 	
@@ -53,7 +55,7 @@ public:
 	UFUNCTION()		//find nearest grid point from given location
 	FIntPoint GetNearestGridCoordFromLocation(FVector Location);
 
-	// returns the gridcell in the given coord // TOptional is just for C++. if you want blueprint access, you can make IsValid control in the FGridCell struct
+	// returns the closest gridcell in the given coord // TOptional is just for C++. if you want blueprint access, you can make IsValid control in the FGridCell struct
 	FGridCell* GetGridCellAtGivenGridCoord(FIntPoint GridCoord);
 	
 	
